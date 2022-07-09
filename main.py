@@ -28,7 +28,9 @@ def download_audio(url):
 
         time.sleep(0.5)
 
-        os.rename(f'{video.title.replace(".","").replace("|", "")}.{extension}', f'{video.title.replace(".","").replace("|", "")}.mp3')
+        video_title = video.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.'})
+
+        os.rename(f'{video_title}.{extension}', f'{video_title}.mp3')
         print(" ")
         print("Downloaded audio!")
 
@@ -61,9 +63,11 @@ def download_video(url):
             print(" ")
             print("Finishing up...")
 
-            vid_name = f'{ysf.title.replace(".","").replace("|", "")}.{extension}'
-            aud_name = f'{ysf.title.replace(".","").replace("|", "")}.mp3'
-            out_name = f'{ysf.title.replace(".","").replace("|", "")}-Finished.mp4'
+            ysf_title = ysf.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.'})
+
+            vid_name = f'{ysf_title}.{extension}'
+            aud_name = f'{ysf_title}.mp3'
+            out_name = f'{ysf_title}-Finished.mp4'
             fps = ysf.fps
 
             ffmpeg_merge_video_audio(vid_name,
