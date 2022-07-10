@@ -28,7 +28,7 @@ def download_audio(url):
 
         time.sleep(0.5)
 
-        video_title = video.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.'})
+        video_title = video.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
 
         os.rename(f'{video_title}.{extension}', f'{video_title}.mp3')
         print(" ")
@@ -63,7 +63,7 @@ def download_video(url):
             print(" ")
             print("Finishing up...")
 
-            ysf_title = ysf.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.'})
+            ysf_title = ysf.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
 
             vid_name = f'{ysf_title}.{extension}'
             aud_name = f'{ysf_title}.mp3'
