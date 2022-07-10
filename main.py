@@ -79,6 +79,7 @@ def download_video(url):
 
             os.remove(vid_name)
             os.remove(aud_name)
+            os.rename(out_name, f"{ysf_title}.mp4")
             print("Done!")
             
             
