@@ -4,9 +4,10 @@ from pytube.cli import on_progress
 import math
 import time
 from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio
+import urllib.request
 
 link = input("Enter YouTube url: ")
-choose = int(input("Video(1) Audio(2): "))
+choose = int(input("Video(1) Audio(2) Thumbnail(3): "))
 
 
 def convert_size(size_bytes):
@@ -17,6 +18,15 @@ def convert_size(size_bytes):
    p = math.pow(1024, i)
    s = round(size_bytes / p, 2)
    return "%s %s" % (s, size_name[i])
+
+
+def download_thumbnail(url):
+    yt = YouTube(url)
+    thumbnail = yt.thumbnail_url.replace("sddefault.jpg", "maxresdefault.jpg")
+    video_title = yt.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
+
+    urllib.request.urlretrieve(thumbnail, f"{video_title}.jpg")
+
 
 def download_audio(url):
         yt = YouTube(url, on_progress_callback=on_progress)
@@ -89,8 +99,10 @@ if choose == 1:
     download_video(link)
 elif choose == 2:
     download_audio(link)
+elif choose == 3:
+    download_thumbnail(link)
 else:
-    print("Please type 1 or 2!")
+    print("Please type 1,2 or 3!")
         
 
 
