@@ -5,6 +5,7 @@ import math
 import time
 from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio
 import urllib.request
+import random
 
 link = input("Enter YouTube url: ")
 choose = int(input("Video(1) Audio(2) Thumbnail(3): "))
@@ -22,10 +23,11 @@ def convert_size(size_bytes):
 
 def download_thumbnail(url):
     yt = YouTube(url)
-    thumbnail = yt.thumbnail_url.replace("sddefault.jpg", "maxresdefault.jpg")
-    video_title = yt.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
+    x = ["sddefault.jpg", "hqdefault.jpg"]
+    for t in x:
+        thumbnail = yt.thumbnail_url.replace(t, "maxresdefault.jpg")
 
-    urllib.request.urlretrieve(thumbnail, f"{video_title}.jpg")
+    urllib.request.urlretrieve(thumbnail, f"{random.randint(1000000, 9999999)}.jpg")
 
 
 def download_audio(url):
@@ -34,13 +36,11 @@ def download_audio(url):
         print("Downloading audio...")
         video.download()
 
-        extension = video.mime_type.replace("audio/", "")
-
         time.sleep(0.5)
 
-        video_title = video.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
+        video_title = video.get_file_path().split("\\")[-1]
 
-        os.rename(f'{video_title}.{extension}', f'{video_title}.mp3')
+        os.rename(video_title, f'{video_title[:-4]}.mp3')
         print(" ")
         print("Downloaded audio!")
 
@@ -69,27 +69,30 @@ def download_video(url):
             extension = ysf.mime_type.replace("video/", "")
             print("Downloading video...")
             ysf.download()
+            path = ysf.get_file_path()
 
             print(" ")
             print("Finishing up...")
 
-            ysf_title = ysf.title.translate({ord(i): None for i in '~"#%&*:<>?/\{|}.,'})
+            ysf_title = path.split("\\")[-1]
 
-            vid_name = f'{ysf_title}.{extension}'
-            aud_name = f'{ysf_title}.mp3'
-            out_name = f'{ysf_title}-Finished.mp4'
-            fps = ysf.fps
+            if ysf_title.endswith(".webm"):
+                aud_name = ysf_title[:-5]  + ".mp3"
+                out_name = ysf_title[:-5]  + "-f.mp4"
+            elif ysf_title.endswith(".mp4"):
+                aud_name = ysf_title[:-4] + ".mp3"
+                out_name = ysf_title[:-4] + "-f.mp4"
 
-            ffmpeg_merge_video_audio(vid_name,
+            ffmpeg_merge_video_audio(ysf_title,
                                      aud_name,out_name,
                                      vcodec='copy',
                                      acodec='copy',
                                      ffmpeg_output=False,
                                      logger=None)
 
-            os.remove(vid_name)
+            os.remove(ysf_title)
             os.remove(aud_name)
-            os.rename(out_name, f"{ysf_title}.mp4")
+            os.rename(out_name, ysf_title[:-6]+".mp4")
             print("Done!")
             
             
